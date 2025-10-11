@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+    
+    tools{
+        maven "Maven3"
+        jdk 'Java21'
+    }
+    
+    stages {
+        
+        stage('SCM Github') {
+            steps {
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mervetuncay/devops-02-pipeline']])
+             
+            }
+        }
+    
+    
+        stage('Build Maven') {
+            steps {
+                bat 'mvn clean install'
+            }
+        }
+        
+        
+        stage('Test Maven') {
+            steps {
+                bat 'mvn test'
+            }
+        }
+           stage('Docker Image') {
+            steps {
+                bat 'docker build  -t mervetuncay/devops-application:latest . '
+            }
+        }
+        stage('Docker Image To DockerHub') {
+            steps { 
+                script{
+                     withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
+                    //some block
+                      bat 'docker login -u mervetuncay -p %dockerhub%'
+                    //  bat 'docker login -u mervetuncay -p dckr_pat_cB4z5YEFTreD1QH8_WlNg8sTtYc'
+                      bat 'docker push mervetuncay/devops-application:latest'
+                
+                    }
+                }
+            }
+       }
+       
+          stage('Deploy Kubernetes') {
+              steps{
+              script{
+                  kubernetesDeploy (configs: 'deployment-service.yml', kubeconfigId: 'kubernetes')
+              }
+           
+                 } 
+       
+}} }

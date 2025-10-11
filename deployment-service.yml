@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-02-pipeline-deployment
+spec:
+   replicas: 5
+   selector:
+    matchLabels:
+      app: devops-02-pipeline
+   template:
+    metadata:
+      labels:
+        app: devops-02-pipeline
+    spec:
+      containers:
+      - name: devops-02-pipeline
+        image: mervetuncay/devops-02-pipeline:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-02-pipeline-service
+spec:
+  selector:
+    app: devops-02-pipeline
+  ports:
+  - port: 9090
+    targetPort: 8080
+
