@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: devops-02-pipeline-deployment
+  name: devops_02_pipeline-deployment
 spec:
    replicas: 5
    selector:
     matchLabels:
-      app: devops-02-pipeline
+      app: devops_02_pipeline
    template:
     metadata:
       labels:
-        app: devops-02-pipeline
+        app: devops_02_pipeline
     spec:
       containers:
-      - name: devops-02-pipeline
-        image: mervetuncay/devops-02-pipeline:latest
+      - name: devops_02_pipeline
+        image: mervetuncay/devops_02_pipeline:latest
         resources:
           limits:
             memory: "128Mi"
@@ -28,10 +28,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: devops-02-pipeline-service
+  name: devops_02_pipeline-service
 spec:
   selector:
-    app: devops-02-pipeline
+    app: devops_02_pipeline
   ports:
   - port: 9090
     targetPort: 8080
